@@ -1,0 +1,89 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "airbnb-base"
+  ],
+  "plugins": [
+    "react",
+    "typescript"
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": "./",
+    "extraFileExtensions": [
+      ".tsx"
+    ]
+  },
+  "rules": {
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".jsx",
+          ".tsx"
+        ]
+      }
+    ],
+    "linebreak-style": [
+      "off"
+    ],
+    "react/jsx-uses-vars": [
+      "error"
+    ],
+    "import/prefer-default-export": [
+      0
+    ],
+    "no-unused-vars": "off",
+    "max-len": [
+      "error",
+      {
+        "code": 140,
+        "tabWidth": 2
+      }
+    ],
+    "lines-between-class-members": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          [
+            "Views",
+            "./client/src/views"
+          ],
+          [
+            "Stores",
+            "./client/src/stores"
+          ],
+          [
+            "Helpers",
+            "./client/src/helpers"
+          ],
+          [
+            "Hooks",
+            "./client/src/hooks"
+          ],
+          [
+            "Components",
+            "./client/src/components"
+          ]
+        ],
+        "extensions": [
+          ".ts",
+          ".tsx",
+          ".js",
+          ".jsx"
+        ]
+      }
+    }
+  }
+}

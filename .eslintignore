@@ -1,0 +1,7 @@
+**/*.json
+**/*.pug
+**/*.spec.ts
+**/*.stories.js
+server/index.js
+node_modules/*
+client/node_modules/*
