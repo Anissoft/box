@@ -26,10 +26,14 @@ nameBox.value = 'Jacob';
 console.log(`Hello, ${nameBox.value}`); // Hello, Jacob
 
 nameBox.set('Mike');
-console.log(`Hello, ${nameBox.get()}`); // Hello, Mike
+console.log(`Hello, ${nameBox.get()}`); // Hello, Jonh
 
 nameBox.set(oldValue => `${oldValue} Jr`);
-console.log(`Hello, ${nameBox.get()}`); // Hello, Mike Jr
+console.log(`Hello, ${nameBox.get()}`); // Hello, Jonh Jr
+
+const objectBox = new Box({ name: 'Mike' });
+objectBox.merge({ lastname: 'Wazowski' });
+console.log(`${objectBox.get('name')} - ${objectBox.get().lastname}`)
 
 ```
 
@@ -53,9 +57,8 @@ function Countdown(props: {start: number}) {
       const clear = () => clearInterval(interval);
 
       timeBox.subscribe(
-        (newValue) => clear(),
-        (newValue) => newValue <= 0,
-        },
+        newValue => clear(),
+        newValue => newValue <= 0,
       );
       return clear;
     },

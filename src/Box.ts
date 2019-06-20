@@ -1,4 +1,6 @@
 import clone from 'lodash/cloneDeep';
+import get from 'lodash/get';
+import merge from 'lodash/merge';
 
 export type BoxEvent<T1> = ((newValue: T1, oldValue: T1) => void);
 export type Condition<T1> = ((newValue: T1, oldValue: T1) => boolean);
@@ -15,7 +17,12 @@ class Box<T1> {
     return this.state;
   }
 
-  public get = () => this.value;
+  public get = (path?: string[] | string, defaultValue?: any) => {
+    if (!path) {
+      return this.value;
+    }
+    return get(this.value, path, defaultValue);
+  };
 
   public set value(value: T1) {
     const oldValue = this.state;
@@ -36,6 +43,17 @@ class Box<T1> {
       this.value = (newValue as ((oldValue: T1) => T1))(this.value);
     } else {
       this.value = newValue;
+    }
+  }
+
+  public merge = (updatedPart: ((oldValue: T1) => Partial<T1>) | Partial<T1>) => {
+    if (typeof this.state !== 'object') {
+      throw new Error('Box.merge(...) can be used only for boxes with object-like values');
+    }
+    if (typeof updatedPart === 'function') {
+      this.value = merge({}, this.value, (updatedPart as ((oldValue: T1) => Partial<T1>))(this.value));
+    } else {
+      this.value = merge({}, this.value, updatedPart);
     }
   }
 
