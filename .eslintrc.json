@@ -20,7 +20,8 @@
     "project": "./tsconfig.json",
     "tsconfigRootDir": "./",
     "extraFileExtensions": [
-      ".tsx"
+      ".tsx",
+      ".ts"
     ]
   },
   "rules": {
@@ -55,28 +56,6 @@
   "settings": {
     "import/resolver": {
       "alias": {
-        "map": [
-          [
-            "Views",
-            "./client/src/views"
-          ],
-          [
-            "Stores",
-            "./client/src/stores"
-          ],
-          [
-            "Helpers",
-            "./client/src/helpers"
-          ],
-          [
-            "Hooks",
-            "./client/src/hooks"
-          ],
-          [
-            "Components",
-            "./client/src/components"
-          ]
-        ],
         "extensions": [
           ".ts",
           ".tsx",

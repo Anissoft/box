@@ -1,10 +1,12 @@
-import Observable from './Box';
+import Box from './Box';
+import useBox from './useBox';
 
-function observable<T>(value: T) {
-  return new Observable(value);
-};
+function box<T>(value: T) {
+  return new Box(value);
+}
 
 export {
-  Observable as Box,
-  observable as box,
+  Box,
+  box,
+  useBox,
 };

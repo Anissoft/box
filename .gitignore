@@ -11,4 +11,5 @@ compiled
 .rpt2_cache
 docs
 *.js
+*.ts
 *.js.map

@@ -1,5 +1,5 @@
-.eslintrc
+.eslintrc.json
 .gitignore
-rollup.config.ts
-tslint.json
+.eslintignore
+.editorconfig
 tsconfig.json
