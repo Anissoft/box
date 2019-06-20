@@ -1,6 +1,6 @@
 # 📦 Box  
 
-Extremely simple and lightweight observer for variable in JS/TS applications. Just put it in the box!
+Extremely simple and lightweight observer for variable in your React applications. Just put it in the box!
 
 ## Installation
 Just run [`npm install` command](https://docs.npmjs.com/getting-started/installing-npm-packages-locally):
@@ -18,7 +18,7 @@ console.log(`Hello, ${nameBox.value}`); // Hello, Jeremy
 
 nameBox.subscribe(
   (newValue, oldValue) => {
-    console.log(`Chnage box value from ${oldValue} to ${newValue}`);
+    console.log(`Change box value from ${oldValue} to ${newValue}`);
   },
 );
 
