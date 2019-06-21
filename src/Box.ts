@@ -2,6 +2,8 @@ import clone from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 
+import useBox from './useBox';
+
 export type BoxEvent<T1> = ((newValue: T1, oldValue: T1) => void);
 export type Condition<T1> = ((newValue: T1, oldValue: T1) => boolean);
 
@@ -17,13 +19,6 @@ class Box<T1> {
     return this.state;
   }
 
-  public get = (path?: string[] | string, defaultValue?: any) => {
-    if (!path) {
-      return this.value;
-    }
-    return get(this.value, path, defaultValue);
-  };
-
   public set value(value: T1) {
     const oldValue = this.state;
     const newValue = clone(value);
@@ -37,6 +32,13 @@ class Box<T1> {
       },
     );
   }
+
+  public get = (path?: string[] | string, defaultValue?: any) => {
+    if (!path) {
+      return this.value;
+    }
+    return get(this.value, path, defaultValue);
+  };
 
   public set = (newValue: ((oldValue: T1) => T1) | T1) => {
     if (typeof newValue === 'function') {
@@ -67,6 +69,10 @@ class Box<T1> {
     return () => {
       this.observers = this.observers.filter(observer => observer.id !== id);
     };
+  }
+
+  public useEffect = () => {
+    return useBox(this as Box<T1>);
   }
 }
 
