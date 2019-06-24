@@ -14,16 +14,16 @@ describe('class Box', () => {
 
     test('should create observable object-like values', () => {
       const box = new Box({ foo: 'bar' });
-      expect(box.get().foo).toBe('bar');
+      expect(box.get()).toEqual({ foo: 'bar' });
     });
 
     test('object-like values should be cloned from ancestor', () => {
       const ancestor = { foo: 'bar' };
       const box = new Box(ancestor);
-      expect(box.get() !== ancestor).toBe(true);
+      expect(box.get()).not.toBe(ancestor);
 
       ancestor.foo = 'another'
-      expect(box.get().foo).toBe('bar');
+      expect(box.get().foo).not.toBe('another');
     });
   })
 
@@ -45,8 +45,8 @@ describe('class Box', () => {
       const box = new Box('string');
       const boxWithObjest = new Box({ foo: 'bar' });
 
-      expect(box.get() === box.value).toBe(true);
-      expect(boxWithObjest.get() === boxWithObjest.value).toBe(true);
+      expect(box.get()).toBe(box.value);
+      expect(boxWithObjest.get()).toBe(boxWithObjest.value);
     });
     test('.get([path], [devaultValue]) should return value from given path, otherwise - defaultValue', () => {
       const box = new Box('string');
@@ -69,7 +69,7 @@ describe('class Box', () => {
       boxWithObjest.set({ bar: 'foo' })
 
       expect(box.get()).toBe('newString');
-      expect(boxWithObjest.get('bar')).toBe('foo');
+      expect(boxWithObjest.get()).toEqual({ bar: 'foo' });
     });
 
     test('.set([callback]) should change observable value as the result of callback function', () => {
@@ -92,7 +92,7 @@ describe('class Box', () => {
 
       boxWithObjest.set(oldValue => oldValue)
 
-      expect(boxWithObjest.get() !== reference).toBe(true);
+      expect(boxWithObjest.get()).not.toBe(reference);
     });
   });
 
@@ -102,8 +102,7 @@ describe('class Box', () => {
 
       boxWithObjest.merge({ bar: 'foo' })
 
-      expect(boxWithObjest.get('foo')).toBe('bar');
-      expect(boxWithObjest.get('bar')).toBe('foo');
+      expect(boxWithObjest.get()).toEqual({ foo: 'bar', bar: 'foo' });
     });
 
     test('.merge([callback]) should mergeDeep result of callback and oldValue', () => {
@@ -111,8 +110,7 @@ describe('class Box', () => {
 
       boxWithObjest.merge(oldValue => ({ [oldValue.foo]: 'foo' }))
 
-      expect(boxWithObjest.get('foo')).toBe('bar');
-      expect(boxWithObjest.get('bar')).toBe('foo');
+      expect(boxWithObjest.get()).toEqual({ foo: 'bar', bar: 'foo' });
     });
   });
 
