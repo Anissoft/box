@@ -25,7 +25,7 @@ nameBox.subscribe(
 nameBox.value = 'Jacob';
 console.log(`Hello, ${nameBox.value}`); // Hello, Jacob
 
-nameBox.set('Mike');
+nameBox.set('John');
 console.log(`Hello, ${nameBox.get()}`); // Hello, Jonh
 
 nameBox.set(oldValue => `${oldValue} Jr`);
