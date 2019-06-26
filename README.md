@@ -57,7 +57,7 @@ function Countdown(props: {start: number}) {
       const clear = () => clearInterval(interval);
 
       timeBox.subscribe(
-        newValue => clear(),
+        () => clear(),
         newValue => newValue <= 0,
       );
       return clear;
