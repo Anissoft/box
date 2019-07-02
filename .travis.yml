@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "8"
+deploy:
+  provider: npm
+  email: anissoftkun@gmail.com
+  before_script: npm install
+  script: "cp .template.npmrc $HOME/.npmrc && npm publish"
+  skip_cleanup: true
+  on:
+    tags: true
+notifications:
+  email:
+    recipients:
+    - anissoftkun@gmail.com
+    on_success: change
+    on_failure: always
