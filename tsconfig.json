@@ -16,6 +16,7 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "declarationDir": ".",
     "outDir": ".",
     "typeRoots": [

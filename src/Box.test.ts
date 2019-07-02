@@ -105,6 +105,12 @@ describe('class Box', () => {
       expect(boxWithObjest.get()).toEqual({ foo: 'bar', bar: 'foo' });
     });
 
+    test('.merge([newValue]) should theow in case non object-like value', () => {
+      const boxWithObjest = new Box(5);
+
+      expect(() => boxWithObjest.merge(8)).toThrow();
+    });
+
     test('.merge([callback]) should mergeDeep result of callback and oldValue', () => {
       const boxWithObjest = new Box<{ [key: string]: string }>({ foo: 'bar' });
 
@@ -145,11 +151,10 @@ describe('class Box', () => {
 
     test('.subscribe([callback]) should return unsubscribe function', (done) => {
       const box = new Box(0);
-      let unsubscribe;
       const event = jest.fn(() => {
         unsubscribe();
       });
-      unsubscribe = box.subscribe(event);
+      const unsubscribe = box.subscribe(event);
 
       box.set(oldValue => oldValue + 1);
 

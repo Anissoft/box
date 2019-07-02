@@ -20,7 +20,7 @@ function useBox<T1>(
   React.useEffect(
     () => {
       return box.subscribe((newValue, oldValue) => {
-        if (!comparator(newValue, oldValue)) {
+        if (comparator(newValue, oldValue)) {
           update(Symbol('(ಠ_ಠ)'));
         }
       });

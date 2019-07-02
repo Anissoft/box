@@ -71,8 +71,8 @@ class Box<T1> {
     };
   }
 
-  public useEffect = () => {
-    return useBox(this as Box<T1>);
+  public useEffect = (comparator?: (newValue: T1, oldValue: T1) => boolean) => {
+    return useBox(this as Box<T1>, comparator);
   }
 }
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { fireEvent, render } from '@testing-library/react';
 import { act, renderHook } from '@testing-library/react-hooks';
 
 import Box from './Box';
@@ -33,5 +34,22 @@ describe('hook useBox', () => {
     });
 
     expect(result.current.get()).toBe('updated string')
+  });
+
+  test('should rerender component when comparator return true', () => {
+    const Component = ({ initialValue }: { initialValue: number }) => {
+      const { get, set } = useBox(initialValue, (newValue) => newValue > (initialValue + 1));
+      return <>
+        <span>{get()}</span>
+        <button onClick={() => set(get() + 1)} />
+      </>
+    };
+    const { container, } = render(<Component initialValue={10} />);
+    const [display, button] = Array.from(container.children);
+    expect(display.textContent).toBe('10');
+    fireEvent.click(button)
+    expect(display.textContent).toBe('10');
+    fireEvent.click(button)
+    expect(display.textContent).toBe('12');
   });
 });
