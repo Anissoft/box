@@ -4,7 +4,7 @@ import Box from './Box';
 
 function useBox<T1>(
   initialValue: T1 | Box<T1>,
-  comparator: ((newValue: T1, oldValue: T1) => boolean) = () => false,
+  comparator: ((newValue: T1, oldValue: T1) => boolean) = () => true,
 ) {
   const [, update] = React.useState(Symbol('(ಠ_ಠ)'));
   const box = React.useMemo(
