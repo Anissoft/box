@@ -13,6 +13,7 @@ class Box<T1> {
 
   constructor(value: T1) {
     this.state = clone(value);
+    this.get = this.get.bind(this);
   }
 
   public get value() {
@@ -33,7 +34,9 @@ class Box<T1> {
     );
   }
 
-  public get = (path?: string[] | string, defaultValue?: any) => {
+  public get(): T1;
+  public get(path: string[] | string): any;
+  public get(path?: string[] | string, defaultValue?: any) {
     if (!path) {
       return this.value;
     }
