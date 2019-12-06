@@ -35,7 +35,7 @@ class Box<T1> {
   }
 
   public get(): T1;
-  public get(path: string[] | string, defaultValue?: any): any;
+  public get(path?: string[] | string, defaultValue?: any): any;
   public get(path?: string[] | string, defaultValue?: any) {
     if (!path) {
       return this.value;
