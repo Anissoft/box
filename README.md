@@ -67,7 +67,7 @@ function Countdown(props: {start: number}) {
 
   return (
     <div>
-      <span>{`Seconds left ${getRemainingTime}`}</span>
+      <span>{`Seconds left ${getRemainingTime()}`}</span>
     </div>
   )
 }
