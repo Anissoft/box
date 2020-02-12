@@ -32,9 +32,9 @@ class Box<T1> {
     );
   }
 
-  public get(): T1;
-  public get<T2>(path?: string[] | string, defaultValue?: T2): T2;
-  public get<T2>(path?: string[] | string, defaultValue?: T2) {
+  public get<T2 = T1>(): T2;
+  public get<T2 = T1>(path?: string[] | string, defaultValue?: T2): T2;
+  public get<T2 = T1>(path?: string[] | string, defaultValue?: T2) {
     if (!path) {
       return this.value;
     }
