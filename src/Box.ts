@@ -2,8 +2,6 @@ import clone from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 
-import useBox from './useBox';
-
 export type BoxEvent<T1> = ((newValue: T1, oldValue: T1) => void);
 export type Condition<T1> = ((newValue: T1, oldValue: T1) => boolean);
 
@@ -35,8 +33,8 @@ class Box<T1> {
   }
 
   public get(): T1;
-  public get(path?: string[] | string, defaultValue?: any): any;
-  public get(path?: string[] | string, defaultValue?: any) {
+  public get<T2>(path?: string[] | string, defaultValue?: T2): T2;
+  public get<T2>(path?: string[] | string, defaultValue?: T2) {
     if (!path) {
       return this.value;
     }
@@ -72,10 +70,6 @@ class Box<T1> {
     return () => {
       this.observers = this.observers.filter(observer => observer.id !== id);
     };
-  }
-
-  public useEffect = (comparator?: (newValue: T1, oldValue: T1) => boolean) => {
-    return useBox(this as Box<T1>, comparator);
   }
 }
 
