@@ -1,19 +1,19 @@
 language: node_js
 node_js:
   - "10"
+stages:
+  - test
+  - publish
 jobs:
   include:
-    - stage: npm release
-      node_js: "8"
-      script: npm install && npm run build
-      deploy:
-        provider: npm
-        email: anissoftkun@gmail.com
-        api_key: $NPMJS_ACCESS_TOKEN
-        script: "npm run build && cp .template.npmrc $HOME/.npmrc && npm publish"
-        skip_cleanup: true
-        on:
-          branch: master
+  - stage: test
+    script: npm run test
+  - stage: publish
+    script: cp .template.npmrc $HOME/.npmrc && npm run build && npm publish --tag beta
+    if: branch = development
+  - stage: publish
+    script: cp .template.npmrc $HOME/.npmrc && npm run build && npm publish
+    if: branch = master
 notifications:
   email:
     recipients:
