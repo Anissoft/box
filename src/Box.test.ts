@@ -27,9 +27,9 @@ describe('class Box', () => {
     });
   });
 
-  describe('extend Box', () => {
-    test('')
-  })
+  // describe('extend Box', () => {
+  //   test('')
+  // })
 
   describe('setter and getter', () => {
     test('getter .value should return current value of observable', () => {
