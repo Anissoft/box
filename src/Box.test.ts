@@ -25,6 +25,10 @@ describe('class Box', () => {
       ancestor.foo = 'another'
       expect(box.get().foo).not.toBe('another');
     });
+  });
+
+  describe('extend Box', () => {
+    test('')
   })
 
   describe('setter and getter', () => {
@@ -40,22 +44,33 @@ describe('class Box', () => {
     });
   });
 
+
+  describe('method .pick()', () => {
+    test('should return the same value as getter .value', () => {
+      const box = new Box('string');
+      const boxWithObjest = new Box({ foo: 'bar' });
+
+      expect(box.pick()).toBe(box.value);
+      expect(boxWithObjest.pick()).toBe(boxWithObjest.value);
+    });
+    test('.pick([path], [devaultValue]) should return value from given path, otherwise - defaultValue', () => {
+      const box = new Box('string');
+      const boxWithObjest = new Box({ foo: [1, 2, 3, 4] });
+
+      expect(box.pick('') === box.value).toBe(true);
+      expect(box.pick('foo')).toBe(undefined);
+      expect(box.pick('foo', 'default')).toBe('default');
+      expect(boxWithObjest.pick('foo.0')).toBe(1);
+    });
+  })
+
   describe('method .get()', () => {
-    test('.get() should return the same value as getter .value', () => {
+    test('should return the same value as getter .value', () => {
       const box = new Box('string');
       const boxWithObjest = new Box({ foo: 'bar' });
 
       expect(box.get()).toBe(box.value);
       expect(boxWithObjest.get()).toBe(boxWithObjest.value);
-    });
-    test('.get([path], [devaultValue]) should return value from given path, otherwise - defaultValue', () => {
-      const box = new Box('string');
-      const boxWithObjest = new Box({ foo: [1, 2, 3, 4] });
-
-      expect(box.get('') === box.value).toBe(true);
-      expect(box.get('foo')).toBe(undefined);
-      expect(box.get('foo', 'default')).toBe('default');
-      expect(boxWithObjest.get('foo.0')).toBe(1);
     });
   })
 
@@ -83,7 +98,7 @@ describe('class Box', () => {
       })
 
       expect(box.get()).toBe('new-string');
-      expect(boxWithObjest.get('bar')).toBe('foo');
+      expect(boxWithObjest.pick('bar')).toBe('foo');
     });
 
     test('.set([callback]) shouldn\'t mutate old value', () => {
