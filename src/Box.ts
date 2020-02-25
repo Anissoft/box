@@ -4,14 +4,23 @@ import merge from 'lodash/merge';
 
 export type BoxEvent<T1> = ((newValue: T1, oldValue: T1) => void);
 export type Condition<T1> = ((newValue: T1, oldValue: T1) => boolean);
+export interface ObservableBox<T1> {
+  get: () => T1;
+  set: (setter: ((oldValue: T1) => T1) | T1) => void;
+  subscribe: (event: BoxEvent<T1>, condition: Condition<T1>) => (() => void);
+}
 
-class Box<T1> {
+class Box<T1> implements ObservableBox<T1> {
   private state: T1;
   private observers: { id: Symbol, observer: BoxEvent<T1>, condition: Condition<T1> }[] = [];
 
   constructor(value: T1) {
     this.state = clone(value);
     this.get = this.get.bind(this);
+    this.set = this.set.bind(this);
+    this.merge = this.merge.bind(this);
+    this.subscribe = this.subscribe.bind(this);
+    this.pick = this.pick.bind(this);
   }
 
   public get value() {
@@ -32,14 +41,9 @@ class Box<T1> {
     );
   }
 
-  public get<T2 = T1>(): T2;
-  public get<T2 = T1>(path?: string[] | string, defaultValue?: T2): T2;
-  public get<T2 = T1>(path?: string[] | string, defaultValue?: T2) {
-    if (!path) {
-      return this.value;
-    }
-    return get(this.value, path, defaultValue);
-  };
+  public get = () => {
+    return this.value;
+  }
 
   public set = (newValue: ((oldValue: T1) => T1) | T1) => {
     if (typeof newValue === 'function') {
@@ -49,14 +53,23 @@ class Box<T1> {
     }
   }
 
+  public pick(): T1;
+  public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2): T2;
+  public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2) {
+    if (!path) {
+      return this.get();
+    }
+    return get(this.value, path, defaultValue);
+  };
+
   public merge = (updatedPart: ((oldValue: T1) => Partial<T1>) | Partial<T1>) => {
     if (typeof this.state !== 'object') {
       throw new Error('Box.merge(...) can be used only for boxes with object-like values');
     }
     if (typeof updatedPart === 'function') {
-      this.value = merge({}, this.value, (updatedPart as ((oldValue: T1) => Partial<T1>))(this.value));
+      this.set(merge({}, this.get(), (updatedPart as ((oldValue: T1) => Partial<T1>))(this.value)));
     } else {
-      this.value = merge({}, this.value, updatedPart);
+      this.set(merge({}, this.get(), updatedPart));
     }
   }
 
