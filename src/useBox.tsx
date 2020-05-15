@@ -2,13 +2,28 @@ import * as React from 'react';
 
 import Box, { BoxEvent } from './Box';
 
+function useBox<T1>(
+  initialValue: T1,
+  comparator?: ((newValue: T1, oldValue: T1) => boolean),
+  updateInterceptor?: (update: () => void) => (() => void),
+): Box<T1>
+function useBox<T1>(
+  initialValue: Box<T1>,
+  comparator?: ((newValue: T1, oldValue: T1) => boolean),
+  updateInterceptor?: (update: () => void) => (() => void),
+): Box<T1>
 function useBox<T1, T2 extends Box<T1>>(
-  initialValue: T1 | T2,
+  initialValue: T2,
+  comparator?: ((newValue: T1, oldValue: T1) => boolean),
+  updateInterceptor?: (update: () => void) => (() => void),
+): T2
+function useBox<T1, T2 extends Box<T1>>(
+  initialValue: T1 | T2 | Box<T1>,
   comparator: ((newValue: T1, oldValue: T1) => boolean) = () => true,
   updateInterceptor: (update: () => void) => (() => void) = (update) => () => update(),
 ) {
   const [, update] = React.useState(Symbol('(ಠ_ಠ)'));
-  const box: Box<T1> | T2 = React.useMemo(
+  const box: Box<T1> | T2  = React.useMemo(
     () => {
       if (initialValue instanceof Box) {
         return initialValue;
