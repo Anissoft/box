@@ -10,10 +10,12 @@ $ npm install @anissoft/box
 
 ## Usage
 
-```ts
+Just pass variable in Box cnstructor. Box will provide you with next functionality:
+
+```typescript
 import {Box, box} from '@anissoft/box';
 
-// #1 primitive  value
+// #1 primitive value
 const nameBox = new Box('Jeremy');// or const nameBox = box('Jeremy');
 console.log(`Hello, ${nameBox.value}`); // Hello, Jeremy
 
@@ -31,21 +33,22 @@ console.log(`Hello, ${nameBox.get()}`); // Hello, Jonh
 
 nameBox.set(oldValue => `${oldValue} Jr`);
 console.log(`Hello, ${nameBox.get()}`); // Hello, Jonh Jr
-
-// #2 object-like value
-const objectBox = new Box({ name: 'Mike' });
-objectBox.merge({ lastname: 'Wazowski' });
-console.log(`${objectBox.pick('name')} - ${objectBox.pick('lastname')}`)
 ```
 
 ```typescript
+// #2 object-like value
+const objectBox = new Box({ name: 'Mike' });
+objectBox.merge({ lastname: 'Wazowski' });
+console.log(`${objectBox.pick('name')} - ${objectBox.pick('lastname')}`) // Mike - Wazowski
+```
 
+```typescript
 // #3 using Box as base class
 class User extends Box<{
   login: string;
   firstname: string;
   lastname: string;
-  preferences: Record<string, string>
+  preferences?: Record<string, string>
 }> {
   constructor(initials: { 
     login: string;
@@ -64,14 +67,15 @@ class User extends Box<{
 
 ```
 
+## With React
 
 You can use boxed value in your React components via handy [hook](https://reactjs.org/docs/hooks-overview.html)
 
-```ts
+```tsx
 import * as React from 'react';
 import { useBox } from '@anissoft/box';
 
-function Countdown(props: {start: number}) {
+function Countdown(props: { start: number }) {
   const { 
     get: getRemainingTime, 
     set: setRemainingTime,
@@ -86,19 +90,22 @@ function Countdown(props: {start: number}) {
       ); 
 
       const clear = () => clearInterval(interval);
-
-      subscribe(
+      const unsubscribe = subscribe(
         () => clear(),
         newValue => newValue <= 0,
       );
-      return clear;
+
+      return () => {
+        clear();
+        unsubscribe();
+      };
     },
     [],
   );
 
   return (
     <div>
-      <span>{`Seconds left ${getRemainingTime()}`}</span>
+      <span>Seconds left {getRemainingTime()}</span>
     </div>
   )
 }
@@ -106,7 +113,7 @@ function Countdown(props: {start: number}) {
 
 ``useBox`` can accept already created box as agrument:
 
-```ts
+```tsx
 import * as React from 'react';
 import { useBox } from '@anissoft/box';
 
@@ -126,8 +133,8 @@ function Component() {
 ```
 
 You can pass comparator as second argument, to specify condition when hook should initiate component update:
-s
-```ts
+
+```tsx
 import * as React from 'react';
 import { useBox } from '@anissoft/box';
 
@@ -156,3 +163,15 @@ function Countdown(props: { start: number }) {
   )
 }
 ```
+
+## Author
+
+👤 \*\*Alexey Anisimov
+
+- Github: [@Anissoft](https://github.com/Anissoft)
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!
+
+Feel free to check [issues page](https://github.com/Anissoft/box/issues).

@@ -21,6 +21,7 @@ export {
   createBox,
   subscribe,
   useBox,
+  Box,
 };
 
 export default Box;

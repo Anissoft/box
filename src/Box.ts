@@ -35,7 +35,7 @@ class Box<T1> implements ObservableBox<T1> {
     this.observers.forEach(
       ({ observer, condition }) => {
         if (condition.apply(null, [newValue, oldValue])) {
-          observer.apply(null, [newValue, oldValue])
+          observer.apply(null, [newValue, oldValue]);
         }
       },
     );
@@ -53,7 +53,7 @@ class Box<T1> implements ObservableBox<T1> {
     }
   }
 
-  public update = this.set
+  public update = this.set;
 
   public pick(): T1;
   public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2): T2;
