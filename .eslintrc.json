@@ -25,6 +25,9 @@
     ]
   },
   "rules": {
+    "import/extensions": [
+      "off",
+    ],
     "react/jsx-filename-extension": [
       1,
       {

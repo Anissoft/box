@@ -53,6 +53,8 @@ class Box<T1> implements ObservableBox<T1> {
     }
   }
 
+  public update = this.set
+
   public pick(): T1;
   public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2): T2;
   public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2) {

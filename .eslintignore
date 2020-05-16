@@ -1,6 +1,8 @@
 **/*.json
 **/*.pug
 **/*.spec.ts
+**/*.test.ts
+**/*.test.tsx
 **/*.stories.js
 server/index.js
 node_modules/*
