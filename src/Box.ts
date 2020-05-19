@@ -13,6 +13,10 @@ export interface ObservableBox<T1> {
 class Box<T1> implements ObservableBox<T1> {
   private state: T1;
   private observers: { id: Symbol, observer: BoxEvent<T1>, condition: Condition<T1> }[] = [];
+  private setAccumulator?: T1;
+  private setTimeout?: any;
+  private mergeAccumulator?: Partial<T1> = {};
+  private mergeTimeout?: any;
 
   constructor(value: T1) {
     this.state = clone(value);
@@ -21,6 +25,7 @@ class Box<T1> implements ObservableBox<T1> {
     this.merge = this.merge.bind(this);
     this.subscribe = this.subscribe.bind(this);
     this.pick = this.pick.bind(this);
+    this.update = this.update.bind(this);
   }
 
   public get value() {
@@ -53,8 +58,6 @@ class Box<T1> implements ObservableBox<T1> {
     }
   }
 
-  public update = this.set;
-
   public pick(): T1;
   public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2): T2;
   public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2) {
@@ -65,15 +68,60 @@ class Box<T1> implements ObservableBox<T1> {
   };
 
   public merge = (updatedPart: ((oldValue: T1) => Partial<T1>) | Partial<T1>) => {
-    if (typeof this.state !== 'object') {
+    if (typeof this.get() !== 'object') {
       throw new Error('Box.merge(...) can be used only for boxes with object-like values');
     }
     if (typeof updatedPart === 'function') {
-      this.set(merge({}, this.get(), (updatedPart as ((oldValue: T1) => Partial<T1>))(this.value)));
+      this.set(merge({}, this.get(), (updatedPart as ((oldValue: T1) => Partial<T1>))(this.get())));
     } else {
       this.set(merge({}, this.get(), updatedPart));
     }
   }
+
+  public setAsync(value: T1) {
+    clearTimeout(this.setTimeout);
+    this.setAccumulator = value;
+
+    this.setTimeout = setTimeout(() => {
+      this.set(this.setAccumulator as T1);
+      this.setAccumulator = undefined;
+    }, 0);
+  }
+
+  public mergeAsync = (updatedPart: ((oldValue: T1) => Partial<T1>) | Partial<T1>) => {
+    if (typeof this.get() !== 'object') {
+      throw new Error('Box.mergeAsync(...) can be used only for boxes with object-like values');
+    }
+    clearTimeout(this.mergeTimeout);
+    if (typeof updatedPart === 'function') {
+      this.mergeAccumulator = merge({}, this.mergeAccumulator, (updatedPart as ((oldValue: T1) => Partial<T1>))(this.get()));
+    } else {
+      this.mergeAccumulator = merge({}, this.mergeAccumulator, updatedPart);
+    }
+    
+    this.mergeTimeout = setTimeout(() => {
+      this.merge(this.mergeAccumulator as Partial<T1>);
+      this.mergeAccumulator = {};
+    }, 0);
+  }
+
+  public update(update: T1): void;
+  public update(update: ((oldValue: T1) => Partial<T1>) | Partial<T1>): void;
+  public update(update: T1 | ((oldValue: T1) => Partial<T1>) | Partial<T1>): void {
+    let prepaeredUpate: T1 | Partial<T1>;
+    if (typeof update === 'function') {
+      prepaeredUpate = (update as ((oldValue: T1) => Partial<T1>))(this.get());
+    } else {
+      prepaeredUpate = update;
+    }
+
+    if (typeof this.get() === 'object') {
+      this.mergeAsync(prepaeredUpate);
+    } else {
+      this.setAsync(prepaeredUpate as T1);
+    }
+  }
+
 
   public subscribe = (
     candidate: BoxEvent<T1>,

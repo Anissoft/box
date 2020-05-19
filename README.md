@@ -3,9 +3,11 @@
 Extremely simple and lightweight observer for variable in your React applications. Just put it in the box!
 
 ## Installation
+
 Just run [`npm install`](https://docs.npmjs.com/getting-started/installing-npm-packages-locally) command:
+
 ```bash
-$ npm install @anissoft/box
+$ npm install @anissoft/box --save
 ```
 
 ## Usage
