@@ -1,13 +1,13 @@
-import Box, { BoxEvent } from './Box';
+import Box, { BoxEvent, Condition } from './Box';
 import useBox from './useBox';
 
 function createBox<T>(value: T) {
   return new Box(value);
 }
 
-function subscribe(callback: () => void, boxes: (Box<any>)[]) {
+function subscribe(callback: () => void, boxes: (Box<any>)[], condition: Condition<any> | Condition<any>[] = []) {
   const ubsubscribes = boxes.map(
-    box => box.subscribe(callback),
+    (box, index) => box.subscribe(callback, typeof condition === 'function' ? condition : condition[index]),
   );
 
   return () => {

@@ -1,6 +1,6 @@
 # 📦 Box  
 
-Extremely simple and lightweight observer for variable in your applications. Just put it in the box!
+Extremely simple, lightweight and well typed observer for variables in your applications. Just put it in the box!
 
 ## Installation
 
@@ -10,15 +10,14 @@ Just run [`npm install`](https://docs.npmjs.com/getting-started/installing-npm-p
 $ npm install @anissoft/box --save
 ```
 
-## Usage
+## Examples
 
-Just pass variable in Box cnstructor. Box will provide you with next functionality:
-
+#### Box with primitive value
 ```typescript
-import {Box, box} from '@anissoft/box';
+import Box from '@anissoft/box';
 
-// #1 primitive value
-const nameBox = new Box('Jeremy');// or const nameBox = box('Jeremy');
+const nameBox = new Box('Jeremy')
+
 console.log(`Hello, ${nameBox.value}`); // Hello, Jeremy
 
 nameBox.subscribe(
@@ -37,15 +36,22 @@ nameBox.set(oldValue => `${oldValue} Jr`);
 console.log(`Hello, ${nameBox.get()}`); // Hello, Jonh Jr
 ```
 
+#### Box with object-like value
+
 ```typescript
-// #2 object-like value
+import Box from '@anissoft/box';
+
 const objectBox = new Box({ name: 'Mike' });
 objectBox.merge({ lastname: 'Wazowski' });
+
 console.log(`${objectBox.pick('name')} - ${objectBox.pick('lastname')}`) // Mike - Wazowski
 ```
 
+#### Box as base class
+
 ```typescript
-// #3 using Box as base class
+import Box from '@anissoft/box';
+
 class User extends Box<{
   login: string;
   firstname: string;
@@ -67,6 +73,120 @@ class User extends Box<{
   ...
 }
 
+```
+
+## API
+
+### .get()
+
+Return box value
+
+```typescript
+const nameBox = new Box('Jeremy')
+
+nameBox.get(); // Jeremy
+```
+
+### .set(newValue)
+
+Set new value in the box and trigger all subcriptions
+
+```typescript
+const nameBox = new Box('Jeremy');
+const numberBox = new Box(0);
+
+nameBox.set('Gerry');
+numberBox.set(oldValue => oldValue + 1);
+
+nameBox.get(); // Gerry
+numberBox.get(); // 1
+```
+
+### .subscribe(callback[, condition])
+
+Execute callback on every value change. If condition was specified - callback will be executed only if condition returns `true`; 
+
+```typescript
+const numberBox = new Box(0);
+
+numberBox.subscribe(
+  () => console.log('value: ',number.box.get());
+);
+
+numberBox.subscribe(
+  () => console.log('value now greater than 3'),
+  (newValue, oldValue) => newValue > 3,
+);
+
+setInterval(() => {
+  numberBox.set(oldValue => oldValue + 1);
+}, 1000);
+```
+
+### .merge(newPartialValue)
+
+Like `.set`, but for object-like values. Instead of replacing an old value, will deeply merge it with the new one
+
+```typescript
+const objectBox = new Box({ foo: 1, bar: 2 });
+
+onjectBox.merge({ bar: 3 });
+
+objectBox.get() // { foo: 1, bar: 3 }
+```
+
+
+### .pick(key)
+
+Returns property from object-like value. Shorthand for `box.get()[key]`
+
+```typescript
+const objectBox = new Box({ name: 'Finn ', race: 'Human' });
+
+console.log(`${objectBox.pick('name')} the ${objectBox.pick(race)}`);
+```
+
+### .update(newPartialValue)
+
+Update works just like `.set` or `.merge`, but delay actual value change till the next tick.
+
+```typescript
+const arrayBox = new Box([0,1,2,3,4,5]);
+
+arrayBox.subscribe(() => {
+  console.log('I was executed only once');
+});
+
+arrayBox.update(value => [...value, 6]);
+arrayBox.update(value => [...value, 7]);
+arrayBox.update(value => [...value, 8]);
+arrayBox.update(value => [...value, 9]);
+
+arrayBox.get(); // [0,1,2,3,4,5]
+
+setTimeout(() => {
+  arrayBox.get(); // [0,1,2,3,4,5,9]
+}, 0);
+
+```
+
+You can use the second argument in updater Callback, to access passed prvious update values in current tick:
+
+```typescript
+const arrayBox = new Box([0,1,2,3,4,5]);
+
+arrayBox.subscribe(() => {
+  console.log('I was executed only once');
+});
+
+arrayBox.update((value) => [...value,  6]);
+arrayBox.update((value, canidate) => [...canidate,  7]);
+arrayBox.update((value, canidate) => [...canidate,  8]);
+arrayBox.update((value, canidate) => [...canidate,  9]);
+
+setTimeout(() => {
+  arrayBox.get(); // [0,1,2,3,4,5,6,7,8,9]
+}, 0);
 ```
 
 ## With React
@@ -165,6 +285,7 @@ function Countdown(props: { start: number }) {
   )
 }
 ```
+
 
 ## Author
 

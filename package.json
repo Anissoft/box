@@ -3,8 +3,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "2.1.0-beta",
-  "description": "Simple value observer with React hook",
+  "version": "2.1.0-beta3",
+  "description": "Light and powerful value observer with React hook",
   "main": "index.js",
   "scripts": {
     "build": "tsc --p tsconfig.json --module commonjs --esModuleInterop",
