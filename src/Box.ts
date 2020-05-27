@@ -84,7 +84,9 @@ class Box<T1> implements ObservableBox<T1> {
 
     this.setTimeout = setTimeout(() => {
       this.set(this.setAccumulator as T1);
-      this.setAccumulator = undefined;
+      setTimeout(() => {
+        this.setAccumulator = undefined;
+      }, 0);
     }, 0);
   }
 
@@ -101,7 +103,9 @@ class Box<T1> implements ObservableBox<T1> {
     
     this.mergeTimeout = setTimeout(() => {
       this.merge(this.mergeAccumulator as Partial<T1>);
-      this.mergeAccumulator = {};
+      setTimeout(() => {
+        this.mergeAccumulator = {};
+      }, 0);
     }, 0);
   }
 
