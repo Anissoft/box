@@ -170,7 +170,7 @@ setTimeout(() => {
 
 ```
 
-You can use the second argument in updater Callback, to access passed prvious update values in current tick:
+You can use the second argument in updater Callback, to access previous update values in current tick:
 
 ```typescript
 const arrayBox = new Box([0,1,2,3,4,5]);
