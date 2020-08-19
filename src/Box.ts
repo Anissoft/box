@@ -59,8 +59,8 @@ class Box<T1> implements ObservableBox<T1> {
   }
 
   public pick(): T1;
-  public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2): T2;
-  public pick<T2 = T1>(path?: string[] | string, defaultValue?: T2) {
+  public pick<T2 = T1>(path?: string[] | string | number, defaultValue?: T2): T2;
+  public pick<T2 = T1>(path?: string[] | string | number, defaultValue?: T2) {
     if (!path) {
       return this.get();
     }
@@ -84,7 +84,9 @@ class Box<T1> implements ObservableBox<T1> {
 
     this.setTimeout = setTimeout(() => {
       this.set(this.setAccumulator as T1);
-      this.setAccumulator = undefined;
+      setTimeout(() => {
+        this.setAccumulator = undefined;
+      }, 0);
     }, 0);
   }
 
@@ -101,23 +103,34 @@ class Box<T1> implements ObservableBox<T1> {
     
     this.mergeTimeout = setTimeout(() => {
       this.merge(this.mergeAccumulator as Partial<T1>);
-      this.mergeAccumulator = {};
+      setTimeout(() => {
+        this.mergeAccumulator = {};
+      }, 0);
     }, 0);
   }
 
   public update(update: T1): void;
-  public update(update: ((oldValue: T1) => Partial<T1>) | Partial<T1>): void;
-  public update(update: T1 | ((oldValue: T1) => Partial<T1>) | Partial<T1>): void {
-    let prepaeredUpate: T1 | Partial<T1>;
-    if (typeof update === 'function') {
-      prepaeredUpate = (update as ((oldValue: T1) => Partial<T1>))(this.get());
-    } else {
-      prepaeredUpate = update;
-    }
+  public update(update: Partial<T1>): void;
+  public update(update: (oldValue: T1, candidate?: T1) => T1): void;
+  public update(update: (oldValue: T1, candidate?: Partial<T1>) => Partial<T1>): void;
+  public update(
+    update: T1  
+    | Partial<T1>
+    | ((oldValue: T1, candidate?: T1) => T1)
+    | ((oldValue: T1, candidate?: Partial<T1>) => Partial<T1>)
+  ): void {
 
-    if (typeof this.get() === 'object') {
+    if (typeof this.get() === 'object' && !Array.isArray(this.get())) {
+      const prepaeredUpate: T1 | Partial<T1> = (typeof update === 'function')
+        ? (update as ((oldValue: T1, candidate?: Partial<T1>) => Partial<T1>))(this.get(), this.mergeAccumulator)
+        : update;
+
       this.mergeAsync(prepaeredUpate);
     } else {
+      const prepaeredUpate: T1 | Partial<T1> = (typeof update === 'function')
+        ? (update as ((oldValue: T1, candidate?: T1) => T1))(this.get(), this.setAccumulator)
+        : update;
+        
       this.setAsync(prepaeredUpate as T1);
     }
   }

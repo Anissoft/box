@@ -17,6 +17,11 @@ describe('class Box', () => {
       expect(box.get()).toEqual({ foo: 'bar' });
     });
 
+    test('should create observable array-like values', () => {
+      const box = new Box([1,2,3,4]);
+      expect(box.get()).toEqual([1,2,3,4]);
+    });
+
     test('object-like values should be cloned from ancestor', () => {
       const ancestor = { foo: 'bar' };
       const box = new Box(ancestor);
@@ -53,6 +58,11 @@ describe('class Box', () => {
       expect(box.pick()).toBe(box.value);
       expect(boxWithObject.pick()).toBe(boxWithObject.value);
     });
+    test('should return value from array by index ', () => {
+      const box = new Box([1,2,3,4]);
+
+      expect(box.pick(2)).toBe(3);
+    });
     test('.pick([path], [devaultValue]) should return value from given path, otherwise - defaultValue', () => {
       const box = new Box('string');
       const boxWithObject = new Box({ foo: [1, 2, 3, 4] });
@@ -79,12 +89,16 @@ describe('class Box', () => {
     test('.set([newValue]) should change observable value to newValue', () => {
       const box = new Box('string');
       const boxWithObject = new Box<{ [key: string]: string }>({ foo: 'bar' });
+      const boxWithArray = new Box([1,2,3]);
 
       box.set('newString');
       boxWithObject.set({ bar: 'foo' })
+      boxWithArray.set([4,5,6]);
+
 
       expect(box.get()).toBe('newString');
       expect(boxWithObject.get()).toEqual({ bar: 'foo' });
+      expect(boxWithArray.get()).toEqual([4,5,6]);
     });
 
     test('.set([callback]) should change observable value as the result of callback function', () => {
@@ -99,6 +113,7 @@ describe('class Box', () => {
 
       expect(box.get()).toBe('new-string');
       expect(boxWithObject.pick('bar')).toBe('foo');
+      
     });
 
     test('.set([callback]) shouldn\'t mutate old value', () => {
@@ -115,7 +130,7 @@ describe('class Box', () => {
     test('.merge([newValue]) should mergeDeep newValue and oldValue', () => {
       const boxWithObject = new Box<{ [key: string]: string }>({ foo: 'bar' });
 
-      boxWithObject.merge({ bar: 'foo' })
+      boxWithObject.merge({ bar: 'foo' });
 
       expect(boxWithObject.get()).toEqual({ foo: 'bar', bar: 'foo' });
     });
@@ -188,9 +203,62 @@ describe('class Box', () => {
 
       expect(event).toHaveBeenCalledTimes(2)
     });
+  });
 
+  describe('method .update', () => {
+    test('.update([newValue]) should update value', (end) => {
+      const box = new Box('string');
+      const boxWithObject = new Box<{ [key: string]: string }>({ foo: 'bar' });
+      const boxWithArray = new Box([1,2,3]);
+
+      box.update('newString');
+      boxWithObject.update({ bar: 'foo' })
+      boxWithArray.update([4,5,6]);
+
+      setTimeout(() => {
+        expect(box.get()).toBe('newString');
+        expect(boxWithObject.get()).toEqual({ foo: 'bar', bar: 'foo' });
+        expect(boxWithArray.get()).toEqual([4,5,6]);
+        end();
+      }, 100);
+    });
+
+    test('.update([newValue]) callback passed as newValue shoul access updateAccumulator', (end) => {
+      const box = new Box('string');
+      const boxWithObject = new Box<Record<string, string>>({ foo: 'bar' });
+
+      box.update('newString');
+      boxWithObject.update({ bar: 'foo' });
+
+      box.update((value, acc) => {
+        expect(acc).toBe('newString');
+        return acc as string;
+      });
+
+      boxWithObject.update((value, acc) => {
+        expect(acc).toEqual({ bar: 'foo' });
+        return acc as Record<string, string>;
+      })
+
+      // -------
+      const arrayBox = new Box([0,1,2,3,4,5]);
+      const event = jest.fn(() => { });
+
+      arrayBox.subscribe(event);
+      
+      arrayBox.update((value) => [...value,  6]);
+      arrayBox.update((value, canidate) => [...(canidate || value),  7]);
+      arrayBox.update((value, canidate) => [...(canidate || value),  8]);
+      arrayBox.update((value, canidate) => [...(canidate || value),  9]);
+      
+      setTimeout(() => {
+        expect(arrayBox.get()).toEqual([0,1,2,3,4,5,6,7,8,9]);
+        end();
+      }, 0);
+      // -----
+    });
     
-    test('.update([newValue]) should trigger subscripe only once in sync flow', (end) => {
+    test('.update([newValue]) should trigger subscribe only once in sync flow', (end) => {
       const box = new Box(0);
       const event = jest.fn(() => { });
       box.subscribe(event);
