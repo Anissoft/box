@@ -1,3 +1,7 @@
+## [DEPRECATED] 
+### Note that this repo has been moved to [js-libs](https://github.com/Anissoft/js-libs) as [@anissoft/state](https://github.com/Anissoft/js-libs/tree/master/packages/state) and [@anissoft/state-react](https://github.com/Anissoft/js-libs/tree/master/packages/state-react) packages.
+
+
 # 📦 Box  
 
 Extremely simple, lightweight and well typed observer for variables in your applications. Just put it in the box!
